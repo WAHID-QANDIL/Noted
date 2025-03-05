@@ -4,9 +4,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.wahid.noted.feature_note.domain.modle.Note
 import org.wahid.noted.feature_note.domain.use_case.NoteUseCases
+import org.wahid.noted.feature_note.domain.utils.NoteOrder
+import org.wahid.noted.feature_note.domain.utils.OrderType
 import javax.inject.Inject
 
 
@@ -18,12 +23,22 @@ class NoteViewModel @Inject constructor(
     private var recentlyDeletedNote: Note? = null
     private val _state = mutableStateOf(NoteStates())
     private val state: State<NoteStates> = _state
+    private var getNotesJob:Job? = null
 
-    fun onEvent(noteEvents: NoteEvents) {
 
-        when (noteEvents) {
+    init {
+        getNotes(NoteOrder.Date(OrderType.Descending))
+    }
+
+    fun onEvent(events: NoteEvents) {
+
+        when (events) {
             is NoteEvents.Order -> {
-                
+                if (state.value.noteOrder::class == events.noteOrder::class) {
+                    if (state.value.noteOrder.orderType == events.noteOrder.orderType)
+                        return
+                }
+                getNotes(events.noteOrder)
 
 
             }
@@ -37,8 +52,8 @@ class NoteViewModel @Inject constructor(
 
             is NoteEvents.DeleteNote -> {
                 viewModelScope.launch {
-                    recentlyDeletedNote = noteEvents.note
-                    useCases.deleteNote(noteEvents.note)
+                    recentlyDeletedNote = events.note
+                    useCases.deleteNote(events.note)
                 }
 
             }
@@ -50,6 +65,18 @@ class NoteViewModel @Inject constructor(
 
             }
         }
+    }
+
+    private fun getNotes(noteOrder: NoteOrder){
+
+        getNotesJob?.cancel()
+
+        getNotesJob = useCases.getAllNotes(noteOrder).onEach { listOfNotes->
+            _state.value = state.value.copy(
+                notes = listOfNotes,
+                noteOrder = noteOrder
+            )
+        }.launchIn(viewModelScope)
     }
 
 }
