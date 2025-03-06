@@ -32,7 +32,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.IconButton
@@ -72,7 +71,7 @@ fun NotesScreen(
         val padding = it
 
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp)
         )
