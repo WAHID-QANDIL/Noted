@@ -22,7 +22,7 @@ class NoteViewModel @Inject constructor(
 
     private var recentlyDeletedNote: Note? = null
     private val _state = mutableStateOf(NoteStates())
-    private val state: State<NoteStates> = _state
+    val state: State<NoteStates> = _state
     private var getNotesJob:Job? = null
 
 
@@ -39,8 +39,6 @@ class NoteViewModel @Inject constructor(
                         return
                 }
                 getNotes(events.noteOrder)
-
-
             }
             is NoteEvents.RestoreNote -> {
                 viewModelScope.launch {
