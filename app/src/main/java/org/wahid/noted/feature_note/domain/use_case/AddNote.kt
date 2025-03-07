@@ -18,10 +18,10 @@ class AddNote(private val repository: NoteRepository) {
 
 
     private fun isValidNote(note: Note): Boolean {
-        if (note.title.isNotBlank())
+        if (note.title.isBlank())
             throw Note.Companion.InvalidNoteException("The title of the note can't be empty")
 
-        if (note.content.isNotBlank() )
+        if (note.content.isBlank() )
             throw Note.Companion.InvalidNoteException("The content of the note can't be empty")
 
         return true

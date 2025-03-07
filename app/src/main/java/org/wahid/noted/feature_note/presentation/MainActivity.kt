@@ -3,24 +3,28 @@ package org.wahid.noted.feature_note.presentation
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import dagger.hilt.android.AndroidEntryPoint
+import org.wahid.noted.feature_note.presentation.add_edit_note_screen.AddEditNoteScreen
+import org.wahid.noted.feature_note.presentation.note_screen.NotesScreen
+import org.wahid.noted.feature_note.presentation.utils.Screen
 import org.wahid.noted.ui.theme.NotedTheme
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,51 +41,49 @@ class MainActivity : ComponentActivity() {
             )
             slideUp.interpolator = AnticipateInterpolator()
             slideUp.duration = 200L
-
-//             Call SplashScreenView.remove at the end of your custom animation.
             slideUp.doOnEnd { splashScreenView.remove() }
-
-//              Run your animation.
             slideUp.start()
         }
+        setContent (){
+
+            NotedTheme {
+                Surface(
+                    color = MaterialTheme.colors.background
+                ) {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.NoteScreen.route
+                    ) {
+                        composable(route = Screen.NoteScreen.route) {
+                            NotesScreen(navController = navController)
+                        }
+                        composable(
+                            route = Screen.AddEditNoteScreen.route + "?noteId={noteId}&noteColor={noteColor}",
+                            arguments = listOf(
+                                navArgument(name = "noteId"){
+                                    type = NavType.IntType
+                                    defaultValue =-1
+                                },
+                                navArgument(name= "noteColor"){
+                                    type = NavType.IntType
+                                    defaultValue = -1
+                                },
+
+                            )
+                        )
+                        {
+                            val noteColor = it.arguments?.getInt("noteColor")?:-1
+                            AddEditNoteScreen(
+                                navController = navController,
+                                noteColor = noteColor
+                            )
+                        }
+                    }
 
 
-
-        setContent(
-
-        ) {
-            NotedTheme(
-                dynamicColor = true,
-            ) {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
                 }
             }
         }
-    }
-
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("This note is from onPause", "onPause: ")
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NotedTheme {
-        Greeting("Android")
     }
 }

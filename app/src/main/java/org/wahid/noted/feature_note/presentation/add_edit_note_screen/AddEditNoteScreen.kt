@@ -54,31 +54,26 @@ fun AddEditNoteScreen(
     val noteContentState = viewModel.noteContentState.value
     val scaffoldState = rememberScaffoldState()
 
-    val noteBackGroundAnimatibleColor = remember {
+    val noteBackGroundAnimatableColor = remember {
         Animatable(
             Color(
                 if (noteColor != -1) noteColor else viewModel.noteColorState.value
             )
         )
-
     }
 
     val coroutineScope = rememberCoroutineScope()
 
-
-    LaunchedEffect(key1 = true){
-        viewModel.eventFlow.collectLatest {event->
-
-            when(event){
-                is AddEditNoteViewModel.UiEvent.SaveNote->{
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is AddEditNoteViewModel.UiEvent.SaveNote -> {
                     navController.navigateUp()
                 }
-                is AddEditNoteViewModel.UiEvent.ShowSnackBar->{
+                is AddEditNoteViewModel.UiEvent.ShowSnackBar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
-
-
                 }
             }
         }
@@ -88,20 +83,20 @@ fun AddEditNoteScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { viewModel.onEvent(AddEditNoteEvent.SaveNote) },
-                Modifier.background(MaterialTheme.colors.primary)
+                modifier = Modifier.background(MaterialTheme.colors.primary, shape = CircleShape)
             ) {
                 Icon(Icons.Filled.Check, contentDescription = "Save Note")
             }
         },
         scaffoldState = scaffoldState
-    )
-    {
-        val padding = it
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(noteBackGroundAnimatibleColor.value)
+                .padding(paddingValues)
+                .background(noteBackGroundAnimatableColor.value)
                 .padding(16.dp)
+                .padding(vertical = 100.dp) // This should calculated based on the screen size
         ) {
             Row(
                 modifier = Modifier
@@ -109,7 +104,6 @@ fun AddEditNoteScreen(
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 Note.colors.forEach { color ->
                     val colorInt = color.toArgb()
                     Box(
@@ -129,7 +123,7 @@ fun AddEditNoteScreen(
                             )
                             .clickable {
                                 coroutineScope.launch {
-                                    noteBackGroundAnimatibleColor.animateTo(
+                                    noteBackGroundAnimatableColor.animateTo(
                                         targetValue = Color(colorInt),
                                         animationSpec = tween(
                                             durationMillis = 500
@@ -140,48 +134,35 @@ fun AddEditNoteScreen(
                             }
                     )
                 }
-
-
             }
             Spacer(Modifier.height(16.dp))
-            
             TransparentInputTextField(
                 text = noteTitleState.content,
-                hint = noteTitleState.title,
+                hint = noteTitleState.hint,
                 isHintVisible = noteTitleState.isHintVisible,
                 onValueChanged = {
                     viewModel.onEvent(AddEditNoteEvent.EnteredTitle(it))
                 },
-                onFocusedChanged =
-                {
+                onFocusedChanged = {
                     viewModel.onEvent(AddEditNoteEvent.ChangeTitleFocus(it))
                 },
                 singleLine = true,
-
             )
-
             Spacer(Modifier.height(16.dp))
-
             TransparentInputTextField(
                 text = noteContentState.content,
-                hint = noteContentState.title,
+                hint = noteContentState.hint,
                 isHintVisible = noteContentState.isHintVisible,
                 onValueChanged = {
                     viewModel.onEvent(AddEditNoteEvent.EnteredContent(it))
                 },
-                onFocusedChanged =
-                {
+                onFocusedChanged = {
                     viewModel.onEvent(AddEditNoteEvent.ChangeContentFocus(it))
                 },
                 singleLine = true,
                 textStyle = MaterialTheme.typography.body1,
                 modifier = Modifier.fillMaxHeight()
-
-                )
-
+            )
         }
-
     }
-
-
 }

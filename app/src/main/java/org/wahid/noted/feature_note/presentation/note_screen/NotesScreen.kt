@@ -45,6 +45,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import org.wahid.noted.feature_note.presentation.note_screen.component.NoteItem
 import org.wahid.noted.feature_note.presentation.note_screen.component.OrderSection
+import org.wahid.noted.feature_note.presentation.utils.Screen
 
 @Composable
 fun NotesScreen(
@@ -60,7 +61,7 @@ fun NotesScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {navController.navigate(Screen.AddEditNoteScreen.route)},
                 backgroundColor = MaterialTheme.colors.primary,
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add note")
@@ -68,12 +69,13 @@ fun NotesScreen(
         },
         scaffoldState = scaffoldState
     ) { it ->
-        val padding = it
 
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .padding(it)
                 .padding(16.dp)
+                .padding(vertical = 100.dp)// This should calculated based on the screen size
         )
 
         {
@@ -124,7 +126,11 @@ fun NotesScreen(
                         note = it,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {  },
+                            .clickable {
+                                navController.navigate(
+                                    Screen.AddEditNoteScreen.route+"?noteId=${it.id}&noteColor=${it.color}"
+                                )
+                            },
                         onDeleteClicked = {
                             viewModel.onEvent(NoteEvents.DeleteNote(it))
                             scope.launch {
