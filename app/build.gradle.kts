@@ -53,6 +53,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.runtime.android)
+    implementation (libs.androidx.material)
 
     //testing
     testImplementation(libs.junit)
@@ -74,6 +77,7 @@ dependencies {
     //dagger-hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    implementation (libs.androidx.hilt.navigation.compose)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
 

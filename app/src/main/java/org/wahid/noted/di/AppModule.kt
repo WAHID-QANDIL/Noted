@@ -12,6 +12,7 @@ import org.wahid.noted.feature_note.domain.repository.NoteRepository
 import org.wahid.noted.feature_note.domain.use_case.AddNote
 import org.wahid.noted.feature_note.domain.use_case.DeleteNote
 import org.wahid.noted.feature_note.domain.use_case.GetAllNotes
+import org.wahid.noted.feature_note.domain.use_case.GetNoteById
 import org.wahid.noted.feature_note.domain.use_case.NoteUseCases
 import javax.inject.Singleton
 
@@ -43,7 +44,8 @@ object AppModule {
         return NoteUseCases(
             getAllNotes = GetAllNotes(noteRepository),
             deleteNote = DeleteNote(noteRepository),
-            addNote = AddNote(noteRepository)
+            addNote = AddNote(noteRepository),
+            getNoteById = GetNoteById(noteRepository)
         )
     }
 
