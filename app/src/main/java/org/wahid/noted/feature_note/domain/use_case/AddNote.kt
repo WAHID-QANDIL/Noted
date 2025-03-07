@@ -1,8 +1,5 @@
 package org.wahid.noted.feature_note.domain.use_case
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.wahid.noted.feature_note.domain.modle.Note
 import org.wahid.noted.feature_note.domain.repository.NoteRepository
 import kotlin.jvm.Throws
