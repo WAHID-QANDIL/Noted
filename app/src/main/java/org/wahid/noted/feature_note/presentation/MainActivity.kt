@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
             slideUp.doOnEnd { splashScreenView.remove() }
             slideUp.start()
         }
-        setContent (){
+        setContent() {
 
             NotedTheme {
                 Surface(
@@ -61,19 +61,19 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screen.AddEditNoteScreen.route + "?noteId={noteId}&noteColor={noteColor}",
                             arguments = listOf(
-                                navArgument(name = "noteId"){
+                                navArgument(name = "noteId") {
                                     type = NavType.IntType
-                                    defaultValue =-1
+                                    defaultValue = -1
                                 },
-                                navArgument(name= "noteColor"){
+                                navArgument(name = "noteColor") {
                                     type = NavType.IntType
                                     defaultValue = -1
                                 },
 
-                            )
+                                )
                         )
                         {
-                            val noteColor = it.arguments?.getInt("noteColor")?:-1
+                            val noteColor = it.arguments?.getInt("noteColor") ?: -1
                             AddEditNoteScreen(
                                 navController = navController,
                                 noteColor = noteColor
